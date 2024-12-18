@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Àudio i Vídeo</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            padding: 0;
+        }
+
+        img {
+            width: 30px;
+            height: 30px;
+            padding: 5px;
+            margin-top: 5px;
+        }
+
+        /* Contenidor principal de botons */
+        .controlButtons {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Espai entre els botons */
+        }
+
+        /* Contenidor dels icones i barra de volum */
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Espai entre el icona i la barra de volum */
+        }
+
+        /* Control de volum */
+        #volume-slider {
+            width: 150px;
+            display: inline-block; /* Siempre visible */
+        }
+
+        /* Animació al fer clic a play */
+        @keyframes playAnimation {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        .play-button-animate {
+            animation: playAnimation 0.5s ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Deixem l'etiqueta àudio sense controls. -->
+    <audio id="player">
+        <source src="media/techbg.mp3" type="audio/mp3">
+        Ho sento, el teu navegador no suporta àudio d'HTML5.
+    </audio>
+
+    <!-- Afegim una capa que mostra si l'àudio s'està reproduint. -->
+    <div class="fonsPlayer">
+        <div class="ocean">
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+    </div>
+
+    <!-- Contenidor dels botons de control -->
+    <div class="controlButtons">
+        <button type="button" id="playButton" onclick="engegarAudio();">
+            <span class="material-symbols-outlined">
+                <img src="svg/play.svg" alt="Play">
+            </span>
+        </button>
+
+        <button type="button" onclick="apagarAudio();">
+            <span class="material-symbols-outlined">
+                <img src="svg/pause.svg" alt="Pause">
+            </span>
+        </button>
+
+        <!-- Contenidor de volum -->
+        <div class="volume-container">
+            <!-- Icono de volumen -->
+            <button type="button" id="volume-button" onclick="toggleVolume();">
+                <span class="material-symbols-outlined">
+                    <img src="svg/volume.svg" alt="Volume">
+                </span>
+            </button>
+
+            <!-- Icono de mute (inicialmente oculto) -->
+            <button type="button" id="mute-button" style="display:none;" onclick="toggleVolume();">
+                <span class="material-symbols-outlined">
+                    <img src="svg/mute.svg" alt="Mute">
+                </span>
+            </button>
+
+            <!-- Control de volumen siempre visible -->
+            <input type="range" min="0" max="1" step="0.01" value="1" id="volume-slider" oninput="ajustarVolum();">
+        </div>
+    </div>
+
+    <script>
+        let audio = document.getElementById('player');
+        let playButton = document.getElementById('playButton');
+        let volumeButton = document.getElementById('volume-button');
+        let muteButton = document.getElementById('mute-button');
+        let volumeSlider = document.getElementById('volume-slider');
+
+        // Función del play
+        function engegarAudio() {
+            audio.play();
+            var waves = document.querySelectorAll('.wave');
+            for (var i = 0; i < waves.length; i++) {
+                waves[i].classList.add('playing');
+            }
+            
+            // Activamos la animación del botón de play
+            playButton.classList.add('play-button-animate');
+            
+            // Eliminamos la animación después de 500ms para poder reutilizarla
+            setTimeout(() => {
+                playButton.classList.remove('play-button-animate');
+            }, 500);
+        }
+
+        // Función del pause
+        function apagarAudio() {
+            audio.pause();
+            var waves = document.querySelectorAll('.wave');
+            for (var i = 0; i < waves.length; i++) {
+                waves[i].classList.remove('playing');
+            }
+        }
+
+        // Función para alternar el volumen entre 0 y el valor normal
+        function toggleVolume() {
+            if (audio.volume === 0) {
+                // Si el volumen está en 0
+                audio.volume = 1;
+                volumeSlider.value = 1;
+                volumeButton.style.display = 'inline-block'; // Mostrar ícono de volumen
+                muteButton.style.display = 'none'; // Ocultar ícono de mute
+            } else {
+                // Si el volumen no está en 0
+                audio.volume = 0;
+                volumeSlider.value = 0;
+                volumeButton.style.display = 'none'; // Ocultar ícono de volumen
+                muteButton.style.display = 'inline-block'; // Mostrar ícono de mute
+            }
+        }
+
+        // Función para ajustar el volumen desde la barra de volumen
+        function ajustarVolum() {
+            var volum = volumeSlider.value; 
+            audio.volume = volum; // Establece el volumen del audio
+        }
+    </script>
+
+</body>
+</html>
